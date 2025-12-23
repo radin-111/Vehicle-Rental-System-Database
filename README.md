@@ -52,12 +52,13 @@ Retrieve booking information along with **Customer name** and **Vehicle name**.
 
 ```sql
 SELECT
-    u.name AS customer_name,
-    v.name AS vehicle_name
+    users.name,
+    vehicles.name
 FROM
-    bookings b
-    INNER JOIN users u ON u.user_id = b.user_id
-    INNER JOIN vehicles v ON v.vehicle_id = b.vehicle_id;
+    bookings
+    INNER JOIN users ON users.user_id = bookings.user_id
+    INNER JOIN vehicles ON vehicles.vehicle_id = bookings.vehicle_id;
+
 ```
 
 This query joins the `bookings` table with `users` and `vehicles` tables and shows the name of the user and the vehicle. The method of join used here is **INNER JOIN**.
@@ -69,16 +70,21 @@ This query joins the `bookings` table with `users` and `vehicles` tables and sho
 Find vehicles that have **never been booked**.
 
 ```sql
+
 SELECT
     *
 FROM
-    vehicles v
+    vehicles
 WHERE
     NOT EXISTS (
-        SELECT 1
-        FROM bookings b
-        WHERE b.vehicle_id = v.vehicle_id
+        SELECT
+            *
+        FROM
+            bookings
+        WHERE
+            bookings.vehicle_id = vehicles.vehicle_id
     );
+
 ```
 
 This query shows the vehicles which have never been booked. It uses a **subquery** with `NOT EXISTS`.
@@ -108,16 +114,16 @@ Find vehicles that have been **booked more than 2 times**.
 
 ```sql
 SELECT
-    v.vehicle_id,
-    v.name,
-    COUNT(b.booking_id) AS number_of_bookings
+    vehicles.vehicle_id,
+    vehicles.name,
+    COUNT(*) AS "number of bookings"
 FROM
-    bookings b
-    INNER JOIN vehicles v ON b.vehicle_id = v.vehicle_id
+    bookings
+    INNER JOIN vehicles ON bookings.vehicle_id = vehicles.vehicle_id
 GROUP BY
-    v.vehicle_id
+    vehicles.vehicle_id
 HAVING
-    COUNT(b.booking_id) > 2;
+    COUNT(*) > 2;
 ```
 
 This query joins `vehicles` and `bookings` tables, groups by `vehicle_id`, counts the number of bookings per vehicle, and shows only vehicles booked more than 2 times.

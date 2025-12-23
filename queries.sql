@@ -41,4 +41,4 @@ FROM
 GROUP BY
     vehicles.vehicle_id
 HAVING
-    COUNT(*) > 2
+    COUNT(*) > 2;
